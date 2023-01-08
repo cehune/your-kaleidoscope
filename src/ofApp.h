@@ -20,10 +20,10 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
+		void drawWave(float avg, int playerNum, bool playing);
 
-		void loadVocal();
-		void loadPiano();
+
+		void loadMusic();
 
 		vector<ofSoundPlayer>voices;
 		ofSoundPlayer voice1, voice2, voice3, voice4, voice5, voice6, voice7;

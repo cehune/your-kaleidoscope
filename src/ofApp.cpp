@@ -9,7 +9,7 @@ void ofApp::setup() {
     myfont.load("roboto.ttf", 20, true, true);
 
 
-    loadPiano();
+    loadMusic();
 
     tempo = 5000; // starting with five seconds tempo
     b_autoPlay = false;
@@ -19,7 +19,7 @@ void ofApp::setup() {
     // ofSetBackgroundAuto(false);
     b_Gui = true;
 
-    
+    ofSetLineWidth(3);
 }
 
 //--------------------------------------------------------------
@@ -58,20 +58,27 @@ void ofApp::draw() {
         // on screen instructions
          myfont.drawString("auto play is " + ofToString(b_autoPlay), 20, 360);
          myfont.drawString("tempo is " + ofToString(tempo) + " ms", 20, 400);
-         
+         if (voices[0].isPlaying()) {
+             myfont.drawString("foolish trans girl", 20, 500);
+         }
     }
 
 
 
     float nBands = 10;
-  
     float* val = ofSoundGetSpectrum(nBands);
     float avg = 0;
     for (int i = 0; i < 10; ++i) {
         avg += val[i];
     }
     avg = avg * 10 / nBands;
-    ofDrawCircle(ofGetWidth() * ofNoise(ofGetElapsedTimef()) * avg, ofGetHeight() * ofNoise(ofGetElapsedTimef()) * 2 * avg, 48);
+    
+
+    ofTranslate(ofGetWindowSize() * 0.5);
+
+    auto noise_seed = glm::vec2(ofRandom(1000), ofRandom(1000));
+    drawWave(1, 3, voices[3].isPlaying());
+    drawWave(1, 5, voices[5].isPlaying());
     
 }
 
@@ -211,7 +218,7 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
 //--------------------------------------------------------------
 
-void ofApp::loadPiano() {
+void ofApp::loadMusic() {
     // load piano samples
     totalVoices = 8;
     voices.clear();
@@ -232,4 +239,31 @@ void ofApp::loadPiano() {
         voice.setMultiPlay(true);
         voices.push_back(voice);
     }
+}
+
+/*
+    drawWave
+    The default pattern, draws a sin wave
+
+    params: 
+        avg: The average numeric value of the sound spectrum
+        playerNum: the number of the soundplayer. Will have a different
+            amplitude based on this value
+        playing: Boolean received from calling the built in isPlaying() function. Will be what controls 
+            whether the sin wave oscillates or sits in a straight line
+
+
+
+*/
+void ofApp::drawWave(float avg, int playerNum,bool playing) {
+    ofBeginShape();
+    ofNoFill();
+    ofSetColor(255, 255, 255);
+    for (int x = -240; x <= 340; x += 1) {
+
+        auto y = sin((x + 340 + ofGetFrameNum()) * 0.005 * playerNum  * playing) * (50 + (100 * avg));
+
+        ofVertex(x, y);
+    }
+    ofEndShape();
 }
