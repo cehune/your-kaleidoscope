@@ -60,6 +60,18 @@ void ofApp::draw() {
          myfont.drawString("tempo is " + ofToString(tempo) + " ms", 20, 400);
          
     }
+
+
+
+    float nBands = 10;
+  
+    float* val = ofSoundGetSpectrum(nBands);
+    float avg = 0;
+    for (int i = 0; i < 10; ++i) {
+        avg += val[i];
+    }
+    avg = avg * 10 / nBands;
+    ofDrawCircle(ofGetWidth() * ofNoise(ofGetElapsedTimef()) * avg, ofGetHeight() * ofNoise(ofGetElapsedTimef()) * 2 * avg, 48);
     
 }
 
