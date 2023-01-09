@@ -1,5 +1,5 @@
 #include "ofApp.h"
-
+#include <cmath>
 //--------------------------------------------------------------
 void ofApp::setup() {
     // load vocal samples
@@ -18,7 +18,7 @@ void ofApp::setup() {
     ofSetBackgroundColor(0);
     // ofSetBackgroundAuto(false);
     b_Gui = true;
-
+    ofEnableSmoothing();
     ofSetLineWidth(3);
 }
 
@@ -72,64 +72,50 @@ void ofApp::draw() {
         avg += val[i];
     }
     avg = avg * 10 / nBands;
-    
+
+    for (int i = 0; i < nBands; ++i) {
+        ofDrawRectangle((ofGetWidth() / nBands * i), 
+            800, ofGetWidth() / nBands, val[i] * 5000);
+    }
 
     ofTranslate(ofGetWindowSize() * 0.5);
 
     auto noise_seed = glm::vec2(ofRandom(1000), ofRandom(1000));
-    drawWave(1, 3, voices[3].isPlaying());
-    drawWave(1, 5, voices[5].isPlaying());
+    totalWave(avg);
+    
     
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
     switch (key) {
-    case '1':
+    case '8':
+        voices[0].setVolume(0.2);
         voices[0].play();
         break;
-    case '2':
+    case '1':
         voices[1].play();
         break;
-    case '3':
+    case '2':
         voices[2].play();
         break;
-    case '4':
+    case '3':
         voices[3].play();
         break;
-    case '5':
+    case '4':
         voices[4].play();
         break;
-    case '6':
+    case '5':
         voices[5].play();
         break;
-    case '7':
+    case '6':
         voices[6].play();
         break;
-
-    case '8':
-        voices[7].setVolume(0.2);
+    case '7':
         voices[7].play();
         break;
-    case 'q':
-        voices[9].play();
-        break;
-    case 'w':
-        voices[10].play();
-        break;
-    case 'e':
-        voices[11].play();
-        break;
-    case 'r':
-        voices[12].play();
-        break;
-    case 't':
-        voices[13].play();
-        break;
-    case 'y':
-        voices[14].play();
-        break;
-    
+
+   
 
     case 'a':
         b_autoPlay = !b_autoPlay;
@@ -222,18 +208,10 @@ void ofApp::loadMusic() {
     // load piano samples
     totalVoices = 8;
     voices.clear();
-    for (int i = 0; i < totalVoices; i++) {
-        ofSoundPlayer voice;
-        string path = "Eno-Piano-0" + ofToString(i + 1) + ".wav";
-        cout << "loading " << path << endl;
-        voice.load(path);
-        voice.setMultiPlay(true);
-        voices.push_back(voice);
-    }
 
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 8; i++) {
         ofSoundPlayer voice;
-        string path = "Eno-Choir-0" + ofToString(i + 1) + ".wav";
+        string path = "Eno-Choir-0" + ofToString(i) + ".wav";
         cout << "loading " << path << endl;
         voice.load(path);
         voice.setMultiPlay(true);
@@ -255,15 +233,22 @@ void ofApp::loadMusic() {
 
 
 */
-void ofApp::drawWave(float avg, int playerNum,bool playing) {
+void ofApp::drawWave(float avg, int playerNum,bool playing, int red, int green, int blue) {
     ofBeginShape();
     ofNoFill();
-    ofSetColor(255, 255, 255);
-    for (int x = -240; x <= 340; x += 1) {
+    ofSetColor(red, green, blue);
+    for (int x = -ofGetWidth(); x <= ofGetWidth(); x += 1) {
 
-        auto y = sin((x + 340 + ofGetFrameNum()) * 0.005 * playerNum  * playing) * (50 + (100 * avg));
+        auto y = sin((x + ofGetWidth() + ofGetFrameNum()) * 0.03 * avg * log(pow(playerNum + 3, 2)) * playing) * (70 + (60 * avg * pow(playerNum + 5, 1.5)));
 
         ofVertex(x, y);
     }
     ofEndShape();
+}
+
+void ofApp::totalWave(float avg) {
+    for (int count = 0; count < num_waves; ++count) {
+        drawWave(avg, count, voices[count].isPlaying(),
+            waveColours[count][0], waveColours[count][1], waveColours[count][2]);
+    }
 }
