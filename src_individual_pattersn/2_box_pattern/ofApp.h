@@ -20,8 +20,23 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+
 		void boxgrid(int sideLength, float *spectrum);
+	
+		vector<int> randColorList = { 0xf44336, 0x9C27B0, 0x3F51B5, 0x03A9F4,
+			0x009688, 0x8BC34A, 0xFFEB3B, 0xFF9800 ,
+			0xFFEB3B, 0xFF9800,
+			0xf44336, 0x9C27B0,
+			0x8BC34A, 0xFFEB3B,
+			0x9C27B0, 0x3F51B5,
+			0x009688, 0x8BC34A,
+			0x8BC34A, 0xFFEB3B,
+			0xf44336, 0x9C27B0, 0x3F51B5,0xFF9800
+		};
+		int center;
 		float* val;
+		
+		
 		ofSoundPlayer sound;
 		ofEasyCam cam;
 };

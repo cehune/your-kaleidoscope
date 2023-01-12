@@ -6,7 +6,10 @@ void ofApp::setup(){
 	ofSetWindowTitle("celias epic boxes");
 	ofEnableDepthTest();
 	sound.load("sun_1.wav");
-	sound.play();
+	ofSetLineWidth(3);
+
+	ofBackground(0);
+	
 }
 
 //--------------------------------------------------------------
@@ -17,10 +20,16 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
+	cam.begin();
+	cam.disableMouseInput();
+	cam.setDistance(550);
+	ofNoFill();
 
-	val = ofSoundGetSpectrum(4); //must be a perfect square
-	boxgrid(2, val);
-
+	ofRotateX(40);
+	ofRotateY(ofGetFrameNum() * 0.3333333333);
+	val = ofSoundGetSpectrum(64); //must be a perfect square
+	boxgrid(8, val);
+	cam.end();
 }
 
 //--------------------------------------------------------------
@@ -81,9 +90,13 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 }
 
 
+
 void ofApp::boxgrid(int sideLength, float* spectrum) {
+	center = sideLength * 100 / 2;
 	for (int i = 0; i < sideLength;++i)
 		for (int j = 0; j< sideLength; ++j) {
-			ofDrawBox(ofPoint(200 + (100 * i), (100 ), 0 + (100 * j)), 100, 100 + (5000 * spectrum[3 * i + j]), 100);
+			
+			ofSetHexColor(randColorList[i +j + i]);
+			ofDrawBox(ofPoint(-center + (100 * i) ,0 , -center + (100 * j)), 100, 100 + (5000 * spectrum[3 * i + j]), 100);
 		}//xyz
 }

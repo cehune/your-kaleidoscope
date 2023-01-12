@@ -25,24 +25,19 @@ class ofApp : public ofBaseApp{
 		void totalWave(float avg);
 
 		void loadMusic();
+
+
+		int flag;
 		
 		int num_waves = 8;
 		int waveColours[14][3] = {
 			{255, 124, 124},
-			//{255, 175, 86},
 			{108, 255, 255 },
-			//{255, 222, 86},
 			{103, 254, 122 },
-			//{79, 255, 188 },
 			{255, 171, 199},
-
-
 			{108, 202, 255},
-			//{86, 132, 255 },
 			{147, 109, 248},
-			//{223, 109, 248},
 			{216, 245, 71},
-			//{252, 145, 234},
 			{255, 255, 255 }
 		};
 		vector<ofSoundPlayer>voices;
@@ -55,4 +50,19 @@ class ofApp : public ofBaseApp{
 		bool b_Gui;
 		ofSoundPlayer drums;
 		
+
+		void boxgrid(int sideLength, float* spectrum);
+
+		vector<int> randColorList = { 0xf44336, 0x9C27B0, 0x3F51B5, 0x03A9F4,
+			0x009688, 0x8BC34A, 0xFFEB3B, 0xFF9800 ,
+			0xFFEB3B, 0xFF9800,
+			0xf44336, 0x9C27B0,
+			0x8BC34A, 0xFFEB3B,
+			0x9C27B0, 0x3F51B5,
+			0x009688, 0x8BC34A,
+			0x8BC34A, 0xFFEB3B,
+			0xf44336, 0x9C27B0, 0x3F51B5,0xFF9800
+		};
+		int center;
+		ofEasyCam cam;
 };
