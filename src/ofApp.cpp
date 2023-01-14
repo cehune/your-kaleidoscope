@@ -6,17 +6,18 @@ void ofApp::setup() {
     // loadVocal();
     // or uncomment this instead to load piano samples
     ofTrueTypeFont::setGlobalDpi(72);
-    myfont.load("roboto.ttf", 20, true, true);
-
-    ofSetFrameRate(30);
+    myfont.load("roboto.ttf", 15, true, true);
+    poppins_small.load("poppins_reg.ttf", 30, true, true);
+    poppins.load("poppins.ttf", 250, true, true);
+    ofSetFrameRate(35);
     ofSetWindowTitle("celias epic boxes");
-    ofEnableDepthTest();
+    
     loadMusic();
 
     tempo = 5000; // starting with five seconds tempo
     b_autoPlay = false;
     currTime = ofGetSystemTimeMillis();
-
+    this->mesh.setMode(ofPrimitiveMode::OF_PRIMITIVE_LINES);
     ofSetBackgroundColor(0);
     // ofSetBackgroundAuto(false);
     b_Gui = true;
@@ -27,7 +28,9 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
-
+    if (flag == 0) {
+        titleUpdate(avg);
+    }
 }
 
 //--------------------------------------------------------------
@@ -49,28 +52,24 @@ void ofApp::draw() {
         // onscreen display of voices that are playing
         for (int i = 0; i < totalVoices; i++) {
             if (voices[i].isPlaying()) {
-                ofDrawRectangle(90, ((i) * 20) + 7, ofMap(voices[i].getPosition(), 0, 1, 20, (ofGetWidth() -110)), 18); // draw a while progress bar
-                ofDrawBitmapStringHighlight("voice " + ofToString(i + 1) + ": ", 10, (i + 1) * 20);
+                ofDrawRectangle(90, ((i) * 20) + ofGetHeight() / 1.2, ofMap(voices[i].getPosition(), 0, 1, 20, (ofGetWidth() - 110)), 18); // draw a while progress bar
+                ofDrawBitmapStringHighlight("voice " + ofToString(i + 1) + ": ", 10, (i + 1) * 20 + ofGetHeight() / 1.2 - 7);
             }
             else {
-                ofDrawBitmapString("voice " + ofToString(i + 1) + ": ", 10, (i + 1) * 20);
+                ofDrawBitmapString("voice " + ofToString(i + 1) + ": ", 10, (i + 1) * 20 + ofGetHeight() / 1.2 - 7);
             }
         }
-         myfont.drawString("Press q, w, e, r, t, y for choir tracks", 20, 200);
-         myfont.drawString("press keys 1-8 to play voices \na to autoplay \n+ /- to increase/decrease tempo  \n'p' to load Piano Samples \n'v' to load vocal samples", 20, 240);
-        // on screen instructions
-         myfont.drawString("auto play is " + ofToString(b_autoPlay), 20, 360);
-         myfont.drawString("tempo is " + ofToString(tempo) + " ms", 20, 400);
-         //if (voices[0].isPlaying()) {
-         //    myfont.drawString("foolish trans girl", 20, 500);
-         //}
+        myfont.drawString("PRESS B TO GO FORWARD A PATTERN, V TO GO BACK", 10, ofGetHeight() - 335);
+         myfont.drawString("press keys 1-8 to play voices \na to autoplay \n+ /- to increase/decrease tempo  \n'p' to load Piano Samples \n'v' to load vocal samples\nauto play is " + ofToString(b_autoPlay) + "tempo is " + ofToString(tempo) + " ms", 10, ofGetHeight() - 315);
+
+         
     }
 
 
 
     float nBands = 64;
     float *val = ofSoundGetSpectrum(nBands);
-    float avg = 0;
+    avg = 0;
     for (int i = 0; i < 64; ++i) {
         avg += val[i];
     }
@@ -78,10 +77,13 @@ void ofApp::draw() {
 
     switch (flag) {
     case 0:
+        titleDraw(avg);
+        break;
+    case 1:
         ofTranslate(ofGetWindowSize() * 0.5);
         totalWave(avg);
         break;
-    case 1:
+    case 2:
         cam.begin();
         cam.disableMouseInput();
         cam.setDistance(550);
@@ -222,6 +224,65 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }
 
+void ofApp::titleDraw(float avg) {
+    ofSetLineWidth(2);
+    this->mesh.drawWireframe();
+    if (avg  > 0) {
+        ofSetColor(255);
+        poppins.drawString("YOUR", 20, ofGetHeight() / 2 - 300);
+        ofSetColor(85, 214, 255);
+        poppins.drawString("KALEIDOSCOPE", 20, ofGetHeight() / 2 - 50);
+        ofSetColor(255);
+        poppins_small.drawString("A generative visual and audio art piece ", 30, ofGetHeight() / 2 + 15);
+        poppins_small.drawString("by mcka chung, 2023", 30, ofGetHeight() / 2 + 50);
+        
+    }
+    else {
+        ofSetColor(255);
+        poppins.drawString("YOUR", ofGetWidth() / 2 - 400, ofGetHeight() / 2 - 300);
+        ofSetColor(131, 255, 194);
+        poppins.drawString("KALEIDOSCOPE", ofGetWidth() / 2 - 400, ofGetHeight() / 2 - 40);
+        
+    }
+
+
+    for (int i = 0; i < this->mesh.getNumVertices(); i++) {
+
+        ofSetColor(this->mesh.getColor(i));
+        ofDrawCircle(this->mesh.getVertex(i), 2);
+    }
+}
+void ofApp::titleUpdate(float avg) {
+
+    ofSeedRandom(39);
+    ++frame_num;
+    if (frame_num == 25) frame_num = 0;
+    this->mesh.clear();
+    int count = 0;
+    ofColor color;
+
+    for (int i = 0; i < 4; i++) {
+
+        for (int x = ofGetWidth() / 2 - 300 - (avg * 600); x <= ofGetWindowWidth(); x += 15) {
+
+            auto noise_seed = ofRandom(500);
+            auto y = ofRandom(-1000, 4000);
+            auto y_new = y + (ofGetHeight() / 20 * frame_num);
+            if (y_new > ofGetHeight() + 2000) y_new -= ofGetHeight() + 2000;
+
+
+            this->mesh.addVertex(glm::vec3(x, y_new, 0));
+            color.setHsb(ofMap(x, 0, ofGetWindowWidth(), 0, 255), 200, 255);
+            this->mesh.addColor(color);
+            this->mesh.addVertex(glm::vec3(x, y_new + 200, 0));
+            color.setHsb(ofMap(x, 0, ofGetWindowWidth(), 0, 255), 200, 255);
+            this->mesh.addColor(color);
+
+
+        }
+    }
+
+}
 
 //--------------------------------------------------------------
 

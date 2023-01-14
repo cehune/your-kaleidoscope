@@ -20,13 +20,14 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
+		void titleUpdate();
+		void titleDraw();
 		int frame_num = 0;
 		ofEasyCam cam;
 		ofMesh mesh;
 		int count = 0;
-		vector<int> frames;
-		vector<int> y;
-		vector<float> radius_list;
-		vector<float> x_list;
+		ofTrueTypeFont poppins;
+		
+		
+		
 };

@@ -20,6 +20,20 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+
+		float avg;
+		//TITLE FIRST PAGE
+		//--------------------------------
+		void titleUpdate(float avg);
+		void titleDraw(float avg);
+		int frame_num = 0;
+		ofTrueTypeFont poppins_small;
+		ofMesh mesh;
+		int count = 0;
+		ofTrueTypeFont poppins;
+		//-----------------------------
+
+
 		void drawWave(float avg, int playerNum, bool playing,
 			int red, int green, int blue);
 		void totalWave(float avg);
